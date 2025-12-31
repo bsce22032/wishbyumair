@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Happy New Year</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle at bottom, #020024, #090979, #000);
+  color: white;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Screens */
+.screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Cartoon */
+.cartoon {
+  font-size: 90px;
+  animation: jump 1s infinite;
+}
+
+@keyframes jump {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-25px); }
+}
+
+/* Countdown */
+#count {
+  font-size: 80px;
+  font-weight: bold;
+}
+
+/* Fireworks */
+.firework {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: gold;
+  animation: boom 1.2s ease-out forwards;
+}
+
+@keyframes boom {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(12); opacity: 0; }
+}
+
+/* Buttons */
+button {
+  padding: 10px 22px;
+  border: none;
+  border-radius: 8px;
+  background: gold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Mute button */
+#mute {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 9999;
+}
+
+/* Watermark */
+#watermark {
+  position: fixed;
+  bottom: 12px;
+  right: 16px;
+  font-size: 14px;
+  font-family: cursive;
+  color: rgba(255, 215, 0, 0.6);
+  letter-spacing: 1px;
+  pointer-events: none;
+  z-index: 9999;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Music -->
+<audio id="music" loop>
+  <source src="https://assets.mixkit.co/music/preview/mixkit-new-year-celebration-1146.mp3">
+</audio>
+
+<button id="mute" onclick="toggleMusic()">🔊</button>
+
+<!-- Start Screen -->
+<div class="screen" id="start">
+  <div class="cartoon">🎉</div>
+  <h2>New Year Surprise</h2>
+  <button onclick="start()">Start</button>
+</div>
+
+<!-- Countdown Screen -->
+<div class="screen hidden" id="countdown">
+  <div class="cartoon">⏰</div>
+  <div id="count">3</div>
+</div>
+
+<!-- Wish Screen -->
+<div class="screen hidden" id="wish">
+  <h1 id="wishText"></h1>
+</div>
+
+<!-- Watermark -->
+<div id="watermark">✨ Umair Ul Hassan</div>
+
+<script>
+// Get name from URL
+const params = new URLSearchParams(window.location.search);
+const userName = params.get("name") || "Friend";
+
+let music = document.getElementById("music");
+let muted = false;
+
+// Mute / Unmute
+function toggleMusic() {
+  muted = !muted;
+  music.muted = muted;
+  document.getElementById("mute").innerText = muted ? "🔇" : "🔊";
+}
+
+// Start animation
+function start() {
+  music.play();
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("countdown").classList.remove("hidden");
+
+  let count = 3;
+  let timer = setInterval(() => {
+    document.getElementById("count").innerText = count;
+    count--;
+
+    if (count < 0) {
+      clearInterval(timer);
+      showWish();
+    }
+  }, 1000);
+}
+
+// Show final wish
+function showWish() {
+  document.getElementById("countdown").classList.add("hidden");
+  document.getElementById("wish").classList.remove("hidden");
+
+  document.getElementById("wishText").innerHTML =
+    `🎆 Happy New Year ${userName}! 🎆<br>May this year bring happiness & success`;
+
+  // Fireworks
+  for (let i = 0; i < 30; i++) {
+    let fw = document.createElement("div");
+    fw.className = "firework";
+    fw.style.left = Math.random() * 100 + "vw";
+    fw.style.top = Math.random() * 100 + "vh";
+    document.body.appendChild(fw);
+    setTimeout(() => fw.remove(), 1200);
+  }
+}
+</script>
+
+</body>
+</html>
